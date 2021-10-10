@@ -1,15 +1,17 @@
 package io.codepool.springchallenge.service.user;
 
-import io.codepool.springchallenge.common.pojo.auth.UserCreateUpdateRequest;
+import io.codepool.springchallenge.common.pojo.auth.BaseUserAuthDetails;
 import io.codepool.springchallenge.common.pojo.UserDTO;
 
 import java.util.List;
 
 public interface UserService {
 
-    UserDTO registerNewUser(UserCreateUpdateRequest registrationRequest);
+    UserDTO registerNewUser(BaseUserAuthDetails registrationRequest);
 
-    UserDTO updateUser(Long userId, UserCreateUpdateRequest registrationRequest);
+    UserDTO deleteUser(Long userId);
+
+    UserDTO updateUser(Long userId, BaseUserAuthDetails registrationRequest);
 
     List<UserDTO> getUsers();
 

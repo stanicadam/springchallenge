@@ -1,7 +1,7 @@
 package io.codepool.springchallenge.controller;
 
-import io.codepool.springchallenge.common.pojo.auth.LoginRequest;
-import io.codepool.springchallenge.common.pojo.auth.UserCreateUpdateRequest;
+import io.codepool.springchallenge.common.pojo.auth.BaseUserAuthDetails;
+import io.codepool.springchallenge.common.pojo.auth.BaseUserAuthDetails;
 import io.codepool.springchallenge.common.pojo.UserDTO;
 import io.codepool.springchallenge.service.user.UserService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -29,7 +29,7 @@ public class UserController {
      */
     @ApiOperation(value = "Login via Username or Email", consumes = "application/json", produces = "application/json;charset=UTF-8")
     @PostMapping(value = "/login", consumes = "application/json", produces = "application/json;charset=UTF-8")
-    public void fakeLogin(@ApiParam("loginRequest") @RequestBody LoginRequest loginRequest) {
+    public void fakeLogin(@ApiParam("loginRequest") @RequestBody BaseUserAuthDetails loginRequest) {
         throw new IllegalStateException("This method shouldn't be called. It's implemented by Spring Security filters.");
     }
 
@@ -41,7 +41,7 @@ public class UserController {
      */
     @ApiOperation(value = "Register new User")
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<UserDTO> saveUser(@RequestBody UserCreateUpdateRequest registrationRequest) {
+    public ResponseEntity<UserDTO> saveUser(@RequestBody BaseUserAuthDetails registrationRequest) {
         return new ResponseEntity<>(
                 userService.registerNewUser(registrationRequest),
                 HttpStatus.CREATED);
@@ -59,9 +59,28 @@ public class UserController {
                     required = true)
     })
     @PutMapping(value = "/update/{userId}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<UserDTO> saveUser(@PathVariable("userId") Long userId, @RequestBody UserCreateUpdateRequest updateRequest) {
+    public ResponseEntity<UserDTO> saveUser(@PathVariable("userId") Long userId, @RequestBody BaseUserAuthDetails updateRequest) {
         return new ResponseEntity<>(
                 userService.updateUser(userId, updateRequest),
+                HttpStatus.OK);
+    }
+
+
+    /**
+     * Method to delete User
+     *
+     * @param userId the user id
+     * @return void
+     */
+    @ApiOperation(value = "Delete User")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", paramType = "header",
+                    required = true)
+    })
+    @DeleteMapping(value = "/delete/{userId}", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<UserDTO> deleteUser(@PathVariable("userId") Long userId) {
+        return new ResponseEntity<>(
+                userService.deleteUser(userId),
                 HttpStatus.OK);
     }
 
@@ -71,6 +90,10 @@ public class UserController {
      * @return List of User DTO
      */
     @ApiOperation(value = "Get Users")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", paramType = "header",
+                    required = true)
+    })
     @PostMapping(value = "/list", produces = "application/json")
     public ResponseEntity<List<UserDTO>> getUsers() {
         return new ResponseEntity<>(

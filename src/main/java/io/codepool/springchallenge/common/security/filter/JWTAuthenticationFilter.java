@@ -2,7 +2,7 @@ package io.codepool.springchallenge.common.security.filter;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.codepool.springchallenge.common.pojo.auth.LoginRequest;
+import io.codepool.springchallenge.common.pojo.auth.BaseUserAuthDetails;
 import io.codepool.springchallenge.common.security.Constants;
 import io.codepool.springchallenge.common.security.service.LoginResponseService;
 import io.jsonwebtoken.Jwts;
@@ -52,7 +52,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
         try {
-            LoginRequest credentials = new ObjectMapper().readValue(request.getInputStream(), LoginRequest.class);
+            BaseUserAuthDetails credentials = new ObjectMapper().readValue(request.getInputStream(), BaseUserAuthDetails.class);
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     credentials.getUsername(), credentials.getPassword()));
         } catch (IOException e) {

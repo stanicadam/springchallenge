@@ -4,7 +4,7 @@ import io.codepool.springchallenge.common.exception.EntityAlreadyExistsException
 import io.codepool.springchallenge.common.exception.EntityNotFoundException;
 import io.codepool.springchallenge.common.exception.ForbiddenUpdateDeleteException;
 import io.codepool.springchallenge.common.mapper.MapperUtil;
-import io.codepool.springchallenge.common.pojo.auth.UserCreateUpdateRequest;
+import io.codepool.springchallenge.common.pojo.auth.BaseUserAuthDetails;
 import io.codepool.springchallenge.common.pojo.UserDTO;
 import io.codepool.springchallenge.common.services.ContextHolderService;
 import io.codepool.springchallenge.dao.model.UserEntity;
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public UserDTO registerNewUser(UserCreateUpdateRequest registrationRequest){
+    public UserDTO registerNewUser(BaseUserAuthDetails registrationRequest){
         //check if such user already exists
         if (userRepository.findByUsername(registrationRequest.getUsername()) != null)
             throw new EntityAlreadyExistsException("User", "Username");
@@ -50,7 +50,22 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public UserDTO updateUser(Long userId, UserCreateUpdateRequest updateRequest){
+    public UserDTO deleteUser(Long userId){
+
+        UserEntity userEntity = userRepository.findOne(userId);
+
+        if (userRepository.findOne(userId) == null)
+            throw new EntityNotFoundException("User", userId.toString());
+
+        userEntity.setActive(false);
+
+        return mapperUtil.map(userRepository.save(userEntity), UserDTO.class);
+    }
+
+
+    @Override
+    @Transactional
+    public UserDTO updateUser(Long userId, BaseUserAuthDetails updateRequest){
 
         //if we are trying to update a user that is not us
         if(contextHolderService.getCurrentUser().getId() != userId)
@@ -77,8 +92,9 @@ public class UserServiceImpl implements UserService{
 
 
     @Override
+    @Transactional
     public List<UserDTO> getUsers(){
-        return userRepository.findAll().stream().map(x->mapperUtil.map(x,UserDTO.class)).collect(Collectors.toList());
+        return userRepository.findByActive(true).stream().map(x->mapperUtil.map(x,UserDTO.class)).collect(Collectors.toList());
     }
 
 }

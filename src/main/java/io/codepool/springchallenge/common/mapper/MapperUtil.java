@@ -1,6 +1,8 @@
 package io.codepool.springchallenge.common.mapper;
 
 
+import io.codepool.springchallenge.common.pojo.ProductDTO;
+import io.codepool.springchallenge.dao.model.ProductEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
@@ -32,6 +34,15 @@ public class MapperUtil {
      */
     @PostConstruct
     public void init() {
+        //define how we want to map the product entity to our dto
+        modelMapper.addMappings(new PropertyMap<ProductEntity, ProductDTO>() {
+            @Override
+            protected void configure() {
+                //seller related properties
+                map(source.getSeller().getId(), destination.getSellerId());
+                map(source.getSeller().getUsername(), destination.getSellerUsername());
+            }
+        });
     }
 
 

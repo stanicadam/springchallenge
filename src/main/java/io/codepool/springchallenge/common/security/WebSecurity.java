@@ -56,8 +56,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 "/swagger-ui.html/**",
                 "/webjars/**",
                 "/favicon.ico",
-                "/api/v1/user/register",
-                "/api/v1/user/list").permitAll()
+                "/api/v1/user/register").permitAll()
                 .anyRequest().authenticated().and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), constants, loginResponseService))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager(), constants));
