@@ -1,11 +1,14 @@
 package io.codepool.springchallenge.common.security.filter;
 
 import io.codepool.springchallenge.common.security.Constants;
+import io.codepool.springchallenge.dao.model.UserEntity;
+import io.codepool.springchallenge.dao.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * The type Jwt authorization filter.
@@ -29,9 +33,12 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final Constants constants;
 
-    public JWTAuthorizationFilter(AuthenticationManager authManager, Constants constants) {
+    private UserRepository userRepository;
+
+    public JWTAuthorizationFilter(AuthenticationManager authManager, Constants constants, UserRepository userRepository) {
         super(authManager);
         this.constants = constants;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -57,8 +64,15 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
             final Date expirationDate = claims.getExpiration();
 
             String user = claims.getSubject();
-            final Collection<SimpleGrantedAuthority> authorities =
-                    new ArrayList<>();
+            UserEntity userEntity;
+
+            userEntity = userRepository.findByUsername(user);
+
+            if (userEntity.getActive() != null && !userEntity.getActive())
+                throw new DisabledException("User disabled");
+
+            final Collection<SimpleGrantedAuthority> authorities = userEntity.getAuthorities();
+
             if (user != null && expirationDate.after(new Date())) {
                 return new UsernamePasswordAuthenticationToken(user, null, authorities);
             }

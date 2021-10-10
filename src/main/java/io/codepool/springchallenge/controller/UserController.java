@@ -1,8 +1,7 @@
 package io.codepool.springchallenge.controller;
 
 import io.codepool.springchallenge.common.pojo.auth.BaseUserAuthDetails;
-import io.codepool.springchallenge.common.pojo.auth.BaseUserAuthDetails;
-import io.codepool.springchallenge.common.pojo.UserDTO;
+import io.codepool.springchallenge.common.pojo.auth.UserDTO;
 import io.codepool.springchallenge.service.user.UserService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -41,9 +40,9 @@ public class UserController {
      */
     @ApiOperation(value = "Register new User")
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<UserDTO> saveUser(@RequestBody BaseUserAuthDetails registrationRequest) {
+    public ResponseEntity<UserDTO> createUser(@RequestBody BaseUserAuthDetails registrationRequest) {
         return new ResponseEntity<>(
-                userService.registerNewUser(registrationRequest),
+                userService.createUser(registrationRequest),
                 HttpStatus.CREATED);
     }
 
@@ -59,7 +58,7 @@ public class UserController {
                     required = true)
     })
     @PutMapping(value = "/update/{userId}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<UserDTO> saveUser(@PathVariable("userId") Long userId, @RequestBody BaseUserAuthDetails updateRequest) {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable("userId") Long userId, @RequestBody BaseUserAuthDetails updateRequest) {
         return new ResponseEntity<>(
                 userService.updateUser(userId, updateRequest),
                 HttpStatus.OK);
@@ -77,10 +76,28 @@ public class UserController {
             @ApiImplicitParam(name = "Authorization", paramType = "header",
                     required = true)
     })
-    @DeleteMapping(value = "/delete/{userId}", consumes = "application/json", produces = "application/json")
+    @DeleteMapping(value = "/delete/{userId}", produces = "application/json")
     public ResponseEntity<UserDTO> deleteUser(@PathVariable("userId") Long userId) {
         return new ResponseEntity<>(
                 userService.deleteUser(userId),
+                HttpStatus.OK);
+    }
+
+    /**
+     * Method to get User by Id
+     *
+     * @param userId the user id
+     * @return UserDTO
+     */
+    @ApiOperation(value = "Get User By Id")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", paramType = "header",
+                    required = true)
+    })
+    @GetMapping(value = "/get/{userId}", produces = "application/json")
+    public ResponseEntity<UserDTO> getById(@PathVariable("userId") Long userId) {
+        return new ResponseEntity<>(
+                userService.getById(userId),
                 HttpStatus.OK);
     }
 
@@ -89,7 +106,7 @@ public class UserController {
      *
      * @return List of User DTO
      */
-    @ApiOperation(value = "Get Users")
+    @ApiOperation(value = "Get All Users")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", paramType = "header",
                     required = true)

@@ -1,4 +1,4 @@
-package io.codepool.springchallenge.common.pojo;
+package io.codepool.springchallenge.common.pojo.product;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +17,5 @@ public class ProductDTO {
     private BigDecimal cost;
     private String sellerId;
     private String sellerUsername;
+    private Boolean active;
 }

@@ -3,9 +3,10 @@ package io.codepool.springchallenge.service.user;
 import io.codepool.springchallenge.common.exception.EntityAlreadyExistsException;
 import io.codepool.springchallenge.common.exception.EntityNotFoundException;
 import io.codepool.springchallenge.common.exception.ForbiddenUpdateDeleteException;
+import io.codepool.springchallenge.common.exception.IllegalArgumentOnCreateUpdateException;
 import io.codepool.springchallenge.common.mapper.MapperUtil;
 import io.codepool.springchallenge.common.pojo.auth.BaseUserAuthDetails;
-import io.codepool.springchallenge.common.pojo.UserDTO;
+import io.codepool.springchallenge.common.pojo.auth.UserDTO;
 import io.codepool.springchallenge.common.services.ContextHolderService;
 import io.codepool.springchallenge.dao.model.UserEntity;
 import io.codepool.springchallenge.dao.repository.UserRepository;
@@ -36,10 +37,13 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public UserDTO registerNewUser(BaseUserAuthDetails registrationRequest){
+    public UserDTO createUser(BaseUserAuthDetails registrationRequest){
         //check if such user already exists
         if (userRepository.findByUsername(registrationRequest.getUsername()) != null)
             throw new EntityAlreadyExistsException("User", "Username");
+
+        //validate new input
+        userInputParamsValidations(registrationRequest);
 
         UserEntity userEntity = mapperUtil.map(registrationRequest, UserEntity.class);
         userEntity.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
@@ -47,6 +51,19 @@ public class UserServiceImpl implements UserService{
 
         return mapperUtil.map(userRepository.save(userEntity), UserDTO.class);
     }
+
+    @Override
+    @Transactional
+    public UserDTO getById(Long id){
+
+        UserEntity userEntity = userRepository.findByIdAndActive(id, true);
+
+        if (userEntity == null)
+            throw new EntityNotFoundException("User", id != null ? id : "null");
+
+        return mapperUtil.map(userEntity, UserDTO.class);
+    }
+
 
     @Override
     @Transactional
@@ -84,6 +101,10 @@ public class UserServiceImpl implements UserService{
             throw new EntityAlreadyExistsException("User", "Username");
 
 
+        //validate new input
+        userInputParamsValidations(updateRequest);
+
+
         userEntity.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
         userEntity.setUsername(updateRequest.getUsername());
 
@@ -94,7 +115,15 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public List<UserDTO> getUsers(){
-        return userRepository.findByActive(true).stream().map(x->mapperUtil.map(x,UserDTO.class)).collect(Collectors.toList());
+        return userRepository.findAll().stream().map(x->mapperUtil.map(x,UserDTO.class)).collect(Collectors.toList());
     }
 
+
+    private void userInputParamsValidations(BaseUserAuthDetails userAuthDetails){
+        if (userAuthDetails.getUsername() == null)
+            throw new IllegalArgumentOnCreateUpdateException("Username cannot be null");
+
+        if (userAuthDetails.getPassword() == null)
+            throw new IllegalArgumentOnCreateUpdateException("Password cannot be null");
+    }
 }

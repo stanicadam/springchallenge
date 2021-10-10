@@ -1,8 +1,10 @@
 package io.codepool.springchallenge.common.security;
 
+import io.codepool.springchallenge.common.enums.AuthorityEnum;
 import io.codepool.springchallenge.common.security.filter.JWTAuthenticationFilter;
 import io.codepool.springchallenge.common.security.filter.JWTAuthorizationFilter;
 import io.codepool.springchallenge.common.security.service.LoginResponseService;
+import io.codepool.springchallenge.dao.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -33,6 +35,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     private LoginResponseService loginResponseService;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     private Constants constants;
@@ -56,10 +61,19 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 "/swagger-ui.html/**",
                 "/webjars/**",
                 "/favicon.ico",
-                "/api/v1/user/register").permitAll()
+                "/api/v1/user/register",
+                "/api/v1/product/list",
+                "/api/v1/product/get/**").permitAll()
+                .and()
+
+                //special endpoints for buyers
+                .authorizeRequests().antMatchers(
+ "/api/v1/interaction/***"
+                ).hasAuthority(AuthorityEnum.BUYER.getValue())
+
                 .anyRequest().authenticated().and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), constants, loginResponseService))
-                .addFilter(new JWTAuthorizationFilter(authenticationManager(), constants));
+                .addFilter(new JWTAuthorizationFilter(authenticationManager(), constants, userRepository));
     }
 
     /**

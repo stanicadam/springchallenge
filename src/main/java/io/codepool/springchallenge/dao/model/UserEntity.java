@@ -28,6 +28,9 @@ public class UserEntity extends BaseModel implements UserDetails {
     @Column(name = "DEPOSIT")
     private BigDecimal deposit;
 
+    @Column(name = "ROLE")
+    private String role;
+
 
     public String getUsername() {
         return username;
@@ -46,12 +49,14 @@ public class UserEntity extends BaseModel implements UserDetails {
     }
 
 
+
     @ApiModelProperty(hidden = true)
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        //ideally this is where we would populate our roles and permissions but we dont have them here
-        //had to implement this as it is due to overriding default spring user model
+    public Collection<SimpleGrantedAuthority> getAuthorities() {
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority(
+                this.getRole()
+        ));
         return authorities;
     }
 
@@ -101,5 +106,14 @@ public class UserEntity extends BaseModel implements UserDetails {
 
     public void setDeposit(BigDecimal deposit) {
         this.deposit = deposit;
+    }
+
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
