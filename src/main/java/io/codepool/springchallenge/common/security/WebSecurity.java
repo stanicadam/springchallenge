@@ -64,12 +64,22 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 "/api/v1/user/register",
                 "/api/v1/product/list",
                 "/api/v1/product/get/**").permitAll()
-                .and()
 
+                .and()
                 //special endpoints for buyers
                 .authorizeRequests().antMatchers(
- "/api/v1/interaction/***"
+ "/api/v1/interaction/deposit/***",
+                "/api/v1/interaction/deposit/reset/***",
+                "/api/v1/interaction/buy"
                 ).hasAuthority(AuthorityEnum.BUYER.getValue())
+
+                .and()
+                //special endpoints for sellers
+                .authorizeRequests().antMatchers(
+ "/api/v1/product/create",
+                "/api/v1/delete/***",
+                "/api/v1/update/***"
+                ).hasAuthority(AuthorityEnum.SELLER.getValue())
 
                 .anyRequest().authenticated().and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager(), constants, loginResponseService))

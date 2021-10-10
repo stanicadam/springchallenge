@@ -4,18 +4,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
-/**
- * The Login Response.
- */
 @Getter
 @Setter
 @NoArgsConstructor
-public class LoginResponse {
+public class CreateUpdateUserRequest extends BaseUserAuthDetails{
 
-    private String username;
-    private String JWTToken;
-    private BigDecimal deposit;
     private String role;
 }

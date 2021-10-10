@@ -1,11 +1,13 @@
 package io.codepool.springchallenge.service.user;
 
+import io.codepool.springchallenge.common.enums.AuthorityEnum;
 import io.codepool.springchallenge.common.exception.EntityAlreadyExistsException;
 import io.codepool.springchallenge.common.exception.EntityNotFoundException;
 import io.codepool.springchallenge.common.exception.ForbiddenUpdateDeleteException;
 import io.codepool.springchallenge.common.exception.IllegalArgumentOnCreateUpdateException;
 import io.codepool.springchallenge.common.mapper.MapperUtil;
 import io.codepool.springchallenge.common.pojo.auth.BaseUserAuthDetails;
+import io.codepool.springchallenge.common.pojo.auth.CreateUpdateUserRequest;
 import io.codepool.springchallenge.common.pojo.auth.UserDTO;
 import io.codepool.springchallenge.common.services.ContextHolderService;
 import io.codepool.springchallenge.dao.model.UserEntity;
@@ -37,7 +39,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public UserDTO createUser(BaseUserAuthDetails registrationRequest){
+    public UserDTO createUser(CreateUpdateUserRequest registrationRequest){
         //check if such user already exists
         if (userRepository.findByUsername(registrationRequest.getUsername()) != null)
             throw new EntityAlreadyExistsException("User", "Username");
@@ -69,9 +71,9 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public UserDTO deleteUser(Long userId){
 
-        UserEntity userEntity = userRepository.findOne(userId);
+        UserEntity userEntity = userRepository.findByIdAndActive(userId, true);
 
-        if (userRepository.findOne(userId) == null)
+        if (userEntity == null)
             throw new EntityNotFoundException("User", userId.toString());
 
         userEntity.setActive(false);
@@ -82,15 +84,10 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public UserDTO updateUser(Long userId, BaseUserAuthDetails updateRequest){
-
-        //if we are trying to update a user that is not us
-        if(contextHolderService.getCurrentUser().getId() != userId)
-            throw new ForbiddenUpdateDeleteException("User");
-
+    public UserDTO updateUser(Long userId, CreateUpdateUserRequest updateRequest){
 
         //if we are trying to update a non existent user
-        UserEntity userEntity = userRepository.findOne(userId);
+        UserEntity userEntity = userRepository.findByIdAndActive(userId, true);
         if (userEntity == null)
             throw new EntityNotFoundException("User", "Id");
 
@@ -107,6 +104,7 @@ public class UserServiceImpl implements UserService{
 
         userEntity.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
         userEntity.setUsername(updateRequest.getUsername());
+        userEntity.setRole(updateRequest.getRole());
 
         return mapperUtil.map(userRepository.save(userEntity), UserDTO.class);
     }
@@ -115,15 +113,25 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public List<UserDTO> getUsers(){
-        return userRepository.findAll().stream().map(x->mapperUtil.map(x,UserDTO.class)).collect(Collectors.toList());
+        return userRepository.findByActive(true).stream().map(x->mapperUtil.map(x,UserDTO.class)).collect(Collectors.toList());
     }
 
 
-    private void userInputParamsValidations(BaseUserAuthDetails userAuthDetails){
+    private void userInputParamsValidations(CreateUpdateUserRequest userAuthDetails){
         if (userAuthDetails.getUsername() == null)
             throw new IllegalArgumentOnCreateUpdateException("Username cannot be null");
 
         if (userAuthDetails.getPassword() == null)
             throw new IllegalArgumentOnCreateUpdateException("Password cannot be null");
+
+        if (userAuthDetails.getRole() == null)
+            throw new IllegalArgumentOnCreateUpdateException("Role cannot be null");
+
+        try {
+            AuthorityEnum.valueOf(userAuthDetails.getRole());
+        }catch (Exception e) {
+            throw new IllegalArgumentOnCreateUpdateException("Please use SELLER or BUYER as role name");
+        }
+
     }
 }

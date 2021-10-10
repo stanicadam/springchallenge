@@ -1,6 +1,7 @@
 package io.codepool.springchallenge.controller;
 
 import io.codepool.springchallenge.common.pojo.auth.BaseUserAuthDetails;
+import io.codepool.springchallenge.common.pojo.auth.CreateUpdateUserRequest;
 import io.codepool.springchallenge.common.pojo.auth.UserDTO;
 import io.codepool.springchallenge.service.user.UserService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -40,7 +41,7 @@ public class UserController {
      */
     @ApiOperation(value = "Register new User")
     @PostMapping(value = "/register", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<UserDTO> createUser(@RequestBody BaseUserAuthDetails registrationRequest) {
+    public ResponseEntity<UserDTO> createUser(@RequestBody CreateUpdateUserRequest registrationRequest) {
         return new ResponseEntity<>(
                 userService.createUser(registrationRequest),
                 HttpStatus.CREATED);
@@ -58,7 +59,7 @@ public class UserController {
                     required = true)
     })
     @PutMapping(value = "/update/{userId}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable("userId") Long userId, @RequestBody BaseUserAuthDetails updateRequest) {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable("userId") Long userId, @RequestBody CreateUpdateUserRequest updateRequest) {
         return new ResponseEntity<>(
                 userService.updateUser(userId, updateRequest),
                 HttpStatus.OK);

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -162,9 +163,9 @@ public class InteractionServiceImpl implements InteractionService{
     }
 
     private void validateDepositAmount(Integer amount){
-        if (amount == null ||
-                Arrays.stream(acceptableDenominations).noneMatch(x-> x == amount))
-            throw new IllegalArgumentException("Please insert one of the acceptable denominations");
+        if (amount == null || Arrays.stream(acceptableDenominations).noneMatch(x-> x == amount))
+            throw new IllegalArgumentException("Please insert one of the acceptable denominations " +
+                   Arrays.toString(acceptableDenominations));
     }
 
 }

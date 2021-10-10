@@ -50,14 +50,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public List<ProductDTO> getProducts(){
-        return productRepository.findAll().stream().map(x->mapperUtil.map(x,ProductDTO.class)).collect(Collectors.toList());
+        return productRepository.findByActive(true).stream().map(x->mapperUtil.map(x,ProductDTO.class)).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public ProductDTO deleteProduct(Long productId){
 
-        ProductEntity productEntity = productRepository.findOne(productId);
+        ProductEntity productEntity = productRepository.findByIdAndActive(productId, true);
 
         if (productEntity == null)
             throw new EntityNotFoundException("Product", productId != null ? productId : "null");
@@ -83,7 +83,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDTO updateProduct(Long productId, CreateUpdateProductRequest updateProductRequest){
-        ProductEntity productEntity = productRepository.findOne(productId);
+        ProductEntity productEntity = productRepository.findByIdAndActive(productId, true);
 
         if (productEntity == null)
             throw new EntityNotFoundException("Product", productId != null ? productId : "null");

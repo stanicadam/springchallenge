@@ -32,6 +32,7 @@ public class LoginResponseServiceImpl implements LoginResponseService {
         userResponse.setUsername(user.getUsername());
         userResponse.setDeposit(user.getDeposit());
         userResponse.setJWTToken(JWT);
+        userResponse.setRole(user.getRole());
         return new ObjectMapper().writeValueAsString(userResponse);
     }
 }
