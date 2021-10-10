@@ -1,5 +1,6 @@
 package io.codepool.springchallenge;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,15 @@ public class Application {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+    /**
+     * Model mapper from the modelmapper library.
+     */
+    @Bean
+    public ModelMapper modelMapper(){
+        return new ModelMapper();
+    };
+
 
     /**
      * Docket api docket.
