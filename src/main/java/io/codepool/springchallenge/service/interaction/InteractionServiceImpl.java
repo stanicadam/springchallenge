@@ -2,6 +2,7 @@ package io.codepool.springchallenge.service.interaction;
 
 import io.codepool.springchallenge.common.exception.EntityNotFoundException;
 import io.codepool.springchallenge.common.exception.IllegalArgumentOnCreateUpdateException;
+import io.codepool.springchallenge.common.exception.ServiceUnableToProcessRequest;
 import io.codepool.springchallenge.common.mapper.MapperUtil;
 import io.codepool.springchallenge.common.pojo.interaction.BuyProductsRequest;
 import io.codepool.springchallenge.common.pojo.interaction.BuyProductsResponse;
@@ -15,13 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 @Service
 public class InteractionServiceImpl implements InteractionService{
@@ -102,7 +101,15 @@ public class InteractionServiceImpl implements InteractionService{
         userEntity.setDeposit(remainder);
         userRepository.save(userEntity);
 
-        String changeInCoins = calculateCoinChange(remainder.setScale(0, RoundingMode.FLOOR).intValue(), acceptableDenominations);
+        String changeInCoins;
+        //an exception means that we cannot return change for this operation
+        //it was not stipulated in the requirements weather we should abort
+        //or give back less change than expected.
+        try {
+            changeInCoins = calculateCoinChange(remainder.setScale(0, RoundingMode.FLOOR).intValue(), acceptableDenominations);
+        }catch (Exception e){
+            throw new ServiceUnableToProcessRequest("We have insufficient funds at the moment and cannot return proper amount of change");
+        }
 
         BuyProductsResponse response = new BuyProductsResponse();
         response.setProduct(mapperUtil.map(productEntity, ProductDTO.class));
