@@ -1,6 +1,6 @@
 package io.codepool.springchallenge.controller;
 
-import io.codepool.springchallenge.common.pojo.RegistrationRequest;
+import io.codepool.springchallenge.common.pojo.auth.RegistrationRequest;
 import io.codepool.springchallenge.common.pojo.UserDTO;
 import io.codepool.springchallenge.service.user.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
-
 
     @Autowired
     private UserService userService;

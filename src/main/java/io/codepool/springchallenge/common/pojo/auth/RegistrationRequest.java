@@ -1,4 +1,4 @@
-package io.codepool.springchallenge.common.pojo;
+package io.codepool.springchallenge.common.pojo.auth;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
