@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(value= HttpStatus.CONFLICT)
 public class EntityAlreadyExistsException extends RuntimeException{
-    public EntityAlreadyExistsException(String entityType){
-        super(entityType + " with this identifier already exists!");
+    public EntityAlreadyExistsException(String entityType, String identifier){
+        super(String.format("%s with this %s already exists", entityType, identifier));
     }
 }

@@ -19,9 +19,6 @@ import java.util.Set;
 @Table(name = "USER")
 public class UserEntity extends BaseModel implements UserDetails {
 
-    @Column(name = "EMAIL")
-    private String email;
-
     @Column(name = "USERNAME")
     private String username;
 
@@ -31,13 +28,6 @@ public class UserEntity extends BaseModel implements UserDetails {
     @Column(name = "DEPOSIT")
     private BigDecimal deposit;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getUsername() {
         return username;
@@ -102,8 +92,7 @@ public class UserEntity extends BaseModel implements UserDetails {
 
         UserEntity userEntity = (UserEntity)object;
 
-        return  Objects.equals(this.getUsername(), userEntity.getUsername()) &&
-                Objects.equals(this.getEmail(), userEntity.getEmail());
+        return  Objects.equals(this.getUsername(), userEntity.getUsername());
     }
 
     public BigDecimal getDeposit() {

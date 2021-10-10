@@ -10,9 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RegistrationRequest {
+public class UserCreateUpdateRequest {
 
-    private String email;
     private String username;
     private String password;
 }

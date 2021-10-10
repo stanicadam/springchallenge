@@ -26,11 +26,11 @@ public class LoginResponseServiceImpl implements LoginResponseService {
 
     @Override
     public String generateLoginResponse(String JWT, String username) throws JsonProcessingException {
-        UserEntity user = userRepository.findUserByEmailOrUsername(username);
+        UserEntity user = userRepository.findByUsername(username);
 
         LoginResponse userResponse = new LoginResponse();
-        userResponse.setEmail(user.getEmail());
         userResponse.setUsername(user.getUsername());
+        userResponse.setDeposit(user.getDeposit());
         userResponse.setJWTToken(JWT);
         return new ObjectMapper().writeValueAsString(userResponse);
     }

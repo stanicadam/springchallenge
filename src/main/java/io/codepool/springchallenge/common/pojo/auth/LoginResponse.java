@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 /**
  * The Login Response.
  */
@@ -12,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class LoginResponse {
 
-    private String email;
     private String username;
     private String JWTToken;
+    private BigDecimal deposit;
 }
