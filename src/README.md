@@ -70,10 +70,10 @@ All models extend the BaseModel where we define our audit columns.
 The contents of this package are injected into our controllers.
 
 #### The tests:
-There are 20 unit tests covering most of the core CRUD functionalities of our system.
+There are more than 20 unit tests covering most of the core CRUD functionalities of our system.
 For each of the functionalities listed in the specs, 
-We have tested both the happy path and the not-so-happy path :).
-For each functionality we tested a lot of possible error responses,
+I have tested both the happy path and the not-so-happy path :).
+For each functionality I tested a lot of possible error responses,
 utilizing our own exception classes.
 We could write additional tests to cover every little case possible,
 but for time's sake we will work with what we have.
@@ -92,12 +92,17 @@ and done some refactoring there to make it look better.
 Additionally we would definitely be looking into better security features.
 
 
-Some choices made during development could have been different, for example:
+Some choices made during development could have been different. 
+Related or unrelated to this, here are some notes:
+- on login, you will receive the JWT. On following requests to other endpoints pass the whole 'Bearer xxxx' into the Authorization header.
 - when deleting users/products do we really delete them or just set them as inactive ? deleting from db is sometimes a bad idea.
 - specs said that update and delete on products should only be made by users who are sellers of the same product,
 it does not specifically say that update and delete on user should also be limited to owners of these entities.
 - cost and deposit are BigDecimal, because it's a good idea to use this type when dealing with money and decimal numbers.
 - Wrapper classes such as 'Integer' and 'Boolean' are used throughout the system where we could have used primitive types, due to a personal preference. 
+- It was not specified how updating the user should work, so I just made it that you pass the userId and then the user object,
+and the username, pass and role change accordingly.
+- SQL injection should not happen due to the way spring data prepared statements work.
 
 I have plenty of ideas on where to take the project from here, if it were a real one, and if we
 were preparing for a production deployment, but let's leave that for discussion upon the review.

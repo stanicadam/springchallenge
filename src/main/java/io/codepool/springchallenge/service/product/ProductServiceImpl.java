@@ -117,9 +117,6 @@ public class ProductServiceImpl implements ProductService {
                 createProductRequest.getAmountAvailable() < 0)
             throw new IllegalArgumentOnCreateUpdateException("Amount Available");
 
-        System.out.println("comparing");
-        System.out.println(createProductRequest.getCost().compareTo(BigDecimal.ZERO) < 1);
-
         if (createProductRequest.getCost() == null ||
                 createProductRequest.getCost().compareTo(BigDecimal.ZERO) < 1)
             throw new IllegalArgumentOnCreateUpdateException("Cost cannot be null or less than zero");

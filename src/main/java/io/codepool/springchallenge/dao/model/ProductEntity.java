@@ -26,4 +26,5 @@ public class ProductEntity extends BaseModel {
     @ManyToOne
     @JoinColumn(name = "SELLER_ID", referencedColumnName = "id")
     private UserEntity seller;
+
 }

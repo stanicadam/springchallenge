@@ -27,11 +27,6 @@ public class UserEntity extends BaseModel implements UserDetails {
     @Column(name = "ROLE")
     private String role;
 
-    @ApiModelProperty(hidden = true)
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "seller", cascade = CascadeType.ALL)
-    private List<ProductEntity> productEntities;
-
-
     public String getUsername() {
         return username;
     }
@@ -108,7 +103,6 @@ public class UserEntity extends BaseModel implements UserDetails {
         this.deposit = deposit;
     }
 
-
     public String getRole() {
         return role;
     }
@@ -117,11 +111,4 @@ public class UserEntity extends BaseModel implements UserDetails {
         this.role = role;
     }
 
-    public List<ProductEntity> getProductEntities() {
-        return productEntities;
-    }
-
-    public void setProductEntities(List<ProductEntity> productEntities) {
-        this.productEntities = productEntities;
-    }
 }

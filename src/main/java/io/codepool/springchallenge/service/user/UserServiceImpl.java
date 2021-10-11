@@ -8,6 +8,7 @@ import io.codepool.springchallenge.common.mapper.MapperUtil;
 import io.codepool.springchallenge.common.pojo.auth.CreateUpdateUserRequest;
 import io.codepool.springchallenge.common.pojo.auth.UserDTO;
 import io.codepool.springchallenge.dao.model.UserEntity;
+import io.codepool.springchallenge.dao.repository.ProductRepository;
 import io.codepool.springchallenge.dao.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +24,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -72,6 +76,7 @@ public class UserServiceImpl implements UserService{
 
         //TODO review this with specification provider, do we really want to delete or just set as inactive ?
         //watch for cascading deletion issues, if we actually want to completely remove the rows
+        productRepository.deleteBySeller(userEntity);
         userRepository.delete(userEntity);
     }
 

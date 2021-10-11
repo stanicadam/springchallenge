@@ -1,5 +1,6 @@
 package io.codepool.springchallenge.common.security.filter;
 
+import io.codepool.springchallenge.common.exception.AuthenticationException;
 import io.codepool.springchallenge.common.security.Constants;
 import io.codepool.springchallenge.dao.model.UserEntity;
 import io.codepool.springchallenge.dao.repository.UserRepository;
@@ -66,8 +67,12 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 
             userEntity = userRepository.findByUsername(user);
 
-            if (userEntity.getActive() != null && !userEntity.getActive())
-                throw new DisabledException("User disabled");
+
+            if (userEntity != null &&userEntity.getActive() != null && !userEntity.getActive())
+                throw new AuthenticationException("User disabled");
+
+            if (userEntity == null)
+                throw new AuthenticationException("Your user does not exist anymore");
 
             final Collection<SimpleGrantedAuthority> authorities = userEntity.getAuthorities();
 
