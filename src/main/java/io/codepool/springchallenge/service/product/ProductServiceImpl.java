@@ -62,7 +62,8 @@ public class ProductServiceImpl implements ProductService {
         if (productEntity == null)
             throw new EntityNotFoundException("Product", productId != null ? productId : "null");
 
-        if (productEntity.getSeller().getId() != contextHolderService.getCurrentUser().getId())
+        //we have overridden the default equals method
+        if (productEntity.getSeller() != contextHolderService.getCurrentUser())
             throw new ForbiddenUpdateDeleteException("Product");
 
         //TODO review this with specification provider, do we really want to delete or just set as inactive ?
@@ -89,7 +90,8 @@ public class ProductServiceImpl implements ProductService {
         if (productEntity == null)
             throw new EntityNotFoundException("Product", productId != null ? productId : "null");
 
-        if (productEntity.getSeller().getId() != contextHolderService.getCurrentUser().getId())
+        //we have overridden the default equals method
+        if (productEntity.getSeller() != contextHolderService.getCurrentUser())
             throw new ForbiddenUpdateDeleteException("Product");
 
         productInputParamsValidations(updateProductRequest);
@@ -114,6 +116,9 @@ public class ProductServiceImpl implements ProductService {
         if (createProductRequest.getAmountAvailable() == null ||
                 createProductRequest.getAmountAvailable() < 0)
             throw new IllegalArgumentOnCreateUpdateException("Amount Available");
+
+        System.out.println("comparing");
+        System.out.println(createProductRequest.getCost().compareTo(BigDecimal.ZERO) < 1);
 
         if (createProductRequest.getCost() == null ||
                 createProductRequest.getCost().compareTo(BigDecimal.ZERO) < 1)

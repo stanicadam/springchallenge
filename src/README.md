@@ -96,7 +96,8 @@ Some choices made during development could have been different, for example:
 - when deleting users/products do we really delete them or just set them as inactive ? deleting from db is sometimes a bad idea.
 - specs said that update and delete on products should only be made by users who are sellers of the same product,
 it does not specifically say that update and delete on user should also be limited to owners of these entities.
-
+- cost and deposit are BigDecimal, because it's a good idea to use this type when dealing with money and decimal numbers.
+- Wrapper classes such as 'Integer' and 'Boolean' are used throughout the system where we could have used primitive types, due to a personal preference. 
 
 I have plenty of ideas on where to take the project from here, if it were a real one, and if we
 were preparing for a production deployment, but let's leave that for discussion upon the review.

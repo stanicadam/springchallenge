@@ -60,8 +60,8 @@ public class InteractionController {
                     required = true)
     })
     @PostMapping(value = "/deposit/reset")
-    public ResponseEntity<?> resetDeposit() {
+    public ResponseEntity<Void> resetDeposit() {
         interactionService.resetDeposit();
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

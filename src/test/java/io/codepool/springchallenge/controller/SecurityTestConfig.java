@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -34,11 +33,11 @@ public class SecurityTestConfig {
         ));
 
         Set<SimpleGrantedAuthority> buyerAuthorities = new HashSet<>();
-        sellerAuthorities.add(new SimpleGrantedAuthority(
+        buyerAuthorities.add(new SimpleGrantedAuthority(
                 AuthorityEnum.BUYER.getValue()
         ));
-        User adminUser = new User("admin",passwordEncoder.encode("strongpass"),true,true,true,true,sellerAuthorities);
-        User otherUser = new User("otheruser",passwordEncoder.encode("weakpass"),true,true,true,true,buyerAuthorities);
+        User adminUser = new User("seller",passwordEncoder.encode("strongpass"),true,true,true,true,sellerAuthorities);
+        User otherUser = new User("buyer",passwordEncoder.encode("weakpass"),true,true,true,true,buyerAuthorities);
         return new InMemoryUserDetailsManager(Arrays.asList(adminUser, otherUser));
     }
 }

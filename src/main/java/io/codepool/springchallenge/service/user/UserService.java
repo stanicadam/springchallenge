@@ -1,6 +1,5 @@
 package io.codepool.springchallenge.service.user;
 
-import io.codepool.springchallenge.common.pojo.auth.BaseUserAuthDetails;
 import io.codepool.springchallenge.common.pojo.auth.CreateUpdateUserRequest;
 import io.codepool.springchallenge.common.pojo.auth.UserDTO;
 

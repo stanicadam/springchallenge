@@ -80,7 +80,7 @@ public class UserController {
     @DeleteMapping(value = "/delete/{userId}", produces = "application/json")
     public ResponseEntity<Void> deleteUser(@PathVariable("userId") Long userId) {
         userService.deleteUser(userId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /**

@@ -1,6 +1,5 @@
 package io.codepool.springchallenge.service.interaction;
 
-import io.codepool.springchallenge.common.exception.EntityNotFoundException;
 import io.codepool.springchallenge.common.exception.IllegalArgumentOnCreateUpdateException;
 import io.codepool.springchallenge.common.exception.ServiceUnableToProcessRequest;
 import io.codepool.springchallenge.common.mapper.MapperUtil;
@@ -77,7 +76,7 @@ public class InteractionServiceImpl implements InteractionService{
         UserEntity userEntity = contextHolderService.getCurrentUser();
 
         if (productEntity == null)
-            throw new EntityNotFoundException("Product", buyProductsRequest.getProductId() != null ? buyProductsRequest.getProductId() : "null");
+            throw new IllegalArgumentOnCreateUpdateException("The specified product does not exist");
 
         if (buyProductsRequest.getAmount() == null || buyProductsRequest.getAmount() <= 0)
             throw new IllegalArgumentOnCreateUpdateException("Please insert amount of product you'd like");

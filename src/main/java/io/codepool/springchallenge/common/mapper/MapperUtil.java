@@ -48,7 +48,8 @@ public class MapperUtil {
 
     /**
      * Method to dynamically map a Page of Entities fetched from db into page of DTO's
-     * Didn't actually implement any pagination but will leave it here because it works nicely :)
+     * Didn't actually implement any pagination but will leave it here because i tested it while working on this,
+     * and it works nicely :)
      *
      * @param <S> - type of DTO objects
      * @param <T> - type of entity pulled from db

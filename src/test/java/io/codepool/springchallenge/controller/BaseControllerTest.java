@@ -2,8 +2,6 @@ package io.codepool.springchallenge.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.codepool.springchallenge.common.enums.AuthorityEnum;
-import io.codepool.springchallenge.common.pojo.auth.BaseUserAuthDetails;
-import io.codepool.springchallenge.common.pojo.auth.CreateUpdateUserRequest;
 import io.codepool.springchallenge.dao.model.ProductEntity;
 import io.codepool.springchallenge.dao.model.UserEntity;
 import io.codepool.springchallenge.dao.repository.ProductRepository;
@@ -12,7 +10,6 @@ import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -52,40 +49,37 @@ public abstract class BaseControllerTest {
     @MockBean
     protected ProductRepository productRepository;
 
-    //for logging in and registering
-    protected BaseUserAuthDetails loginRequest;
-    protected CreateUpdateUserRequest registrationRequest;
-
 
     //user entities.
     //our user entity represents the user that we are simulating being logged in with.
     //we will be logged in with the role SELLER
-    protected UserEntity primaryUserEntity;
+    protected UserEntity sellerUserEntity;
     //other user entity represents some other user that is not us
     //important for testing deletion of other user's db property
     //role is BUYER
-    protected UserEntity otherUserEntity;
+    protected UserEntity buyerUserEntity;
 
 
     //properties that belong to our user entity
-    protected final String primaryUserUsername = "admin";
-    protected final String primaryUserPassword = "strongpass";
+    protected final String sellerUsername = "seller";
+    protected final String sellerPassword = "strongpass";
 
 
     //properties that belong to some other user
-    protected final String otherUserUsername = "otheruser";
-    protected final String otherUserPassword = "weakpass";
+    protected final String buyerUsername = "buyer";
+    protected final String buyerUserPassword = "weakpass";
+    protected final BigDecimal buyerUserDeposit = new BigDecimal(20);
 
 
     //products
     protected ProductEntity primaryProduct;
     protected ProductEntity otherProduct;
 
-    protected final String primaryProductName = "Primary Product";
+    protected final String primaryProductName = "Product One";
     protected final Integer primaryProductAmount = 999;
     protected final BigDecimal primaryProductPrice = new BigDecimal(100);
 
-    protected final String otherProductName = "Other Product";
+    protected final String otherProductName = "Product Two";
     protected final Integer otherProductAmount = 999;
     protected final BigDecimal otherProductPrice = new BigDecimal(50);
 
@@ -100,39 +94,29 @@ public abstract class BaseControllerTest {
     public void setup(){
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
 
-        initAllAuthRelated();
+        initAllUserRelated();
         initAllProductRelated();
     }
 
 
     /**
-     * init auth/user related entities and dto's
+     * init user related entities
      */
-    private void initAllAuthRelated(){
-        //init registration and log in requests
-        registrationRequest = new CreateUpdateUserRequest();
-        registrationRequest.setPassword(primaryUserPassword);
-        registrationRequest.setUsername(primaryUserUsername);
-        registrationRequest.setRole(AuthorityEnum.SELLER.getValue());
-
-        loginRequest = new BaseUserAuthDetails();
-        loginRequest.setUsername(primaryUserUsername);
-        loginRequest.setPassword(primaryUserPassword);
-
-
+    private void initAllUserRelated(){
         //init our log in user
-        primaryUserEntity = new UserEntity();
-        primaryUserEntity.setUsername(primaryUserUsername);
-        primaryUserEntity.setPassword(passwordEncoder.encode(primaryUserPassword));
-        primaryUserEntity.setActive(true);
-        primaryUserEntity.setRole(AuthorityEnum.SELLER.getValue());
+        sellerUserEntity = new UserEntity();
+        sellerUserEntity.setUsername(sellerUsername);
+        sellerUserEntity.setPassword(passwordEncoder.encode(sellerPassword));
+        sellerUserEntity.setActive(true);
+        sellerUserEntity.setRole(AuthorityEnum.SELLER.getValue());
 
         //init the other user that is not us
-        otherUserEntity = new UserEntity();
-        otherUserEntity.setUsername(otherUserUsername);
-        otherUserEntity.setPassword(passwordEncoder.encode(otherUserPassword));
-        otherUserEntity.setActive(true);
-        primaryUserEntity.setRole(AuthorityEnum.BUYER.getValue());
+        buyerUserEntity = new UserEntity();
+        buyerUserEntity.setUsername(buyerUsername);
+        buyerUserEntity.setPassword(passwordEncoder.encode(buyerUserPassword));
+        buyerUserEntity.setActive(true);
+        buyerUserEntity.setDeposit(buyerUserDeposit);
+        buyerUserEntity.setRole(AuthorityEnum.BUYER.getValue());
 
     }
 
@@ -147,7 +131,7 @@ public abstract class BaseControllerTest {
         primaryProduct.setAmountAvailable(primaryProductAmount);
         primaryProduct.setCost(primaryProductPrice);
         primaryProduct.setActive(true);
-        primaryProduct.setSeller(primaryUserEntity);
+        primaryProduct.setSeller(sellerUserEntity);
 
 
         otherProduct = new ProductEntity();
@@ -155,7 +139,7 @@ public abstract class BaseControllerTest {
         otherProduct.setAmountAvailable(otherProductAmount);
         otherProduct.setCost(otherProductPrice);
         otherProduct.setActive(true);
-        otherProduct.setSeller(otherUserEntity);
+        otherProduct.setSeller(buyerUserEntity);
 
     }
 
