@@ -1,5 +1,6 @@
 package io.codepool.springchallenge.dao.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -7,10 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The User Model.
@@ -30,6 +28,10 @@ public class UserEntity extends BaseModel implements UserDetails {
 
     @Column(name = "ROLE")
     private String role;
+
+    @ApiModelProperty(hidden = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "seller", cascade = CascadeType.ALL)
+    private List<ProductEntity> productEntities;
 
 
     public String getUsername() {
@@ -115,5 +117,13 @@ public class UserEntity extends BaseModel implements UserDetails {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public List<ProductEntity> getProductEntities() {
+        return productEntities;
+    }
+
+    public void setProductEntities(List<ProductEntity> productEntities) {
+        this.productEntities = productEntities;
     }
 }

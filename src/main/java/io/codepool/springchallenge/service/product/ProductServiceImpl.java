@@ -50,14 +50,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public List<ProductDTO> getProducts(){
-        return productRepository.findByActive(true).stream().map(x->mapperUtil.map(x,ProductDTO.class)).collect(Collectors.toList());
+        return productRepository.findAll().stream().map(x->mapperUtil.map(x,ProductDTO.class)).collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public ProductDTO deleteProduct(Long productId){
+    public void deleteProduct(Long productId){
 
-        ProductEntity productEntity = productRepository.findByIdAndActive(productId, true);
+        ProductEntity productEntity = productRepository.findOne(productId);
 
         if (productEntity == null)
             throw new EntityNotFoundException("Product", productId != null ? productId : "null");
@@ -65,14 +65,15 @@ public class ProductServiceImpl implements ProductService {
         if (productEntity.getSeller().getId() != contextHolderService.getCurrentUser().getId())
             throw new ForbiddenUpdateDeleteException("Product");
 
-        productEntity.setActive(false);
-        return mapperUtil.map(productRepository.save(productEntity), ProductDTO.class);
+        //TODO review this with specification provider, do we really want to delete or just set as inactive ?
+        //watch for cascading deletion issues, if we actually want to completely remove the rows
+        productRepository.delete(productEntity);
     }
 
     @Override
     @Transactional
     public ProductDTO getById(Long productId){
-        ProductEntity productEntity = productRepository.findByIdAndActive(productId, true);
+        ProductEntity productEntity = productRepository.findOne(productId);
 
         if (productEntity == null)
             throw new EntityNotFoundException("Product", productId != null ? productId : "null");
@@ -83,7 +84,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDTO updateProduct(Long productId, CreateUpdateProductRequest updateProductRequest){
-        ProductEntity productEntity = productRepository.findByIdAndActive(productId, true);
+        ProductEntity productEntity = productRepository.findOne(productId);
 
         if (productEntity == null)
             throw new EntityNotFoundException("Product", productId != null ? productId : "null");

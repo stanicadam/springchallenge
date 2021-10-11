@@ -73,7 +73,7 @@ public class InteractionServiceImpl implements InteractionService{
     @Transactional
     public BuyProductsResponse buyProducts(BuyProductsRequest buyProductsRequest){
 
-        ProductEntity productEntity = productRepository.findByIdAndActive(buyProductsRequest.getProductId(), true);
+        ProductEntity productEntity = productRepository.findOne(buyProductsRequest.getProductId());
         UserEntity userEntity = contextHolderService.getCurrentUser();
 
         if (productEntity == null)

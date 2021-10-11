@@ -11,6 +11,7 @@ import io.codepool.springchallenge.common.pojo.auth.CreateUpdateUserRequest;
 import io.codepool.springchallenge.common.pojo.auth.UserDTO;
 import io.codepool.springchallenge.common.services.ContextHolderService;
 import io.codepool.springchallenge.dao.model.UserEntity;
+import io.codepool.springchallenge.dao.repository.ProductRepository;
 import io.codepool.springchallenge.dao.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,10 +34,6 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private MapperUtil mapperUtil;
 
-    @Autowired
-    private ContextHolderService contextHolderService;
-
-
     @Override
     @Transactional
     public UserDTO createUser(CreateUpdateUserRequest registrationRequest){
@@ -58,7 +55,7 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public UserDTO getById(Long id){
 
-        UserEntity userEntity = userRepository.findByIdAndActive(id, true);
+        UserEntity userEntity = userRepository.findOne(id);
 
         if (userEntity == null)
             throw new EntityNotFoundException("User", id != null ? id : "null");
@@ -69,16 +66,17 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public UserDTO deleteUser(Long userId){
+    public void deleteUser(Long userId){
 
-        UserEntity userEntity = userRepository.findByIdAndActive(userId, true);
+        UserEntity userEntity = userRepository.findOne(userId);
 
         if (userEntity == null)
             throw new EntityNotFoundException("User", userId.toString());
 
-        userEntity.setActive(false);
 
-        return mapperUtil.map(userRepository.save(userEntity), UserDTO.class);
+        //TODO review this with specification provider, do we really want to delete or just set as inactive ?
+        //watch for cascading deletion issues, if we actually want to completely remove the rows
+        userRepository.delete(userEntity);
     }
 
 
@@ -87,7 +85,7 @@ public class UserServiceImpl implements UserService{
     public UserDTO updateUser(Long userId, CreateUpdateUserRequest updateRequest){
 
         //if we are trying to update a non existent user
-        UserEntity userEntity = userRepository.findByIdAndActive(userId, true);
+        UserEntity userEntity = userRepository.findOne(userId);
         if (userEntity == null)
             throw new EntityNotFoundException("User", "Id");
 
@@ -113,7 +111,7 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public List<UserDTO> getUsers(){
-        return userRepository.findByActive(true).stream().map(x->mapperUtil.map(x,UserDTO.class)).collect(Collectors.toList());
+        return userRepository.findAll().stream().map(x->mapperUtil.map(x,UserDTO.class)).collect(Collectors.toList());
     }
 
 

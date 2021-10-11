@@ -50,10 +50,9 @@ public class ProductController {
                     required = true)
     })
     @DeleteMapping(value = "/delete/{productId}", produces = "application/json")
-    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable("productId") Long productId) {
-        return new ResponseEntity<>(
-                productService.deleteProduct(productId),
-                HttpStatus.OK);
+    public ResponseEntity<Void> deleteProduct(@PathVariable("productId") Long productId) {
+        productService.deleteProduct(productId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**
