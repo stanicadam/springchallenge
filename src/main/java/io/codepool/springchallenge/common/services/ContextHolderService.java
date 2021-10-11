@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * This service allows us to fetch the current logged in user,
- * this functionality will be used accross the system so it's best to externalize it
+ * this functionality will be used across the system so it's best to externalize it
  * into its own class.
  */
 @Component

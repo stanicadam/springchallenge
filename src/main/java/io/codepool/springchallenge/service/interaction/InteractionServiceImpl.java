@@ -40,9 +40,8 @@ public class InteractionServiceImpl implements InteractionService{
     //ideally this could be externalized and picked up from the db
     //in case anything changes with our vending machine
     //we could allow for other amounts to be inserted without updating the code
-    //this is why i did not write if/else statements to check if the amount fits, but rather
-    //pull the comma separated values and check if it works.
-    protected final int[] acceptableDenominations = {5,10,20,50,100};
+    //this is why i did not write if/else statements to check if the amount fits
+    private final int[] acceptableDenominations = {5,10,20,50,100};
 
 
     @Override
