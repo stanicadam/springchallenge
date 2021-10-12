@@ -12,7 +12,7 @@ API for vending machines
 
 * if necessary, install the Lombok plugin into your intellij to remove the IDE warnings for missing fields
 
-* import the db dump 'dbdump.sql'. I used mysql version 5.7 even though it's a bit outdated,
+* import the db dump 'codepooldump.sql'. I used mysql version 5.7 even though it's a bit outdated,
 due to having to connect to a legacy db often times. The dump should run fine on new versions as well. 
 If necessary, running a small docker container with this mysql server version will work fine, but I've tested it
 and it looks OK.
@@ -94,6 +94,7 @@ Additionally we would definitely be looking into better security features.
 
 Some choices made during development could have been different. 
 Related or unrelated to this, here are some notes:
+- I used lombok to take away unnecessary boilerplate
 - on login, you will receive the JWT. On following requests to other endpoints pass the whole 'Bearer xxxx' into the Authorization header.
 - when deleting users/products do we really delete them or just set them as inactive ? deleting from db is sometimes a bad idea.
 - specs said that update and delete on products should only be made by users who are sellers of the same product,
